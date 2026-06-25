@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MedIntel AI Enterprise Pro</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+:root{
+  --bg:#eef4ff;
+  --card:#ffffff;
+  --card-soft:#f8fbff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --primary:#2563eb;
+  --primary-2:#1d4ed8;
+  --accent:#0ea5e9;
+  --success:#16a34a;
+  --warning:#d97706;
+  --danger:#dc2626;
+  --border:#dbe4f0;
+  --shadow:0 14px 40px rgba(15, 23, 42, 0.09);
+  --radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(135deg,#edf4ff 0%,#f8fbff 55%,#ffffff 100%);
+  color:var(--text);
+  padding:24px;
+}
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font:inherit}
+.container{max-width:1500px;margin:auto}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;gap:18px;
+  background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);
+  border:1px solid rgba(219,228,240,0.9);
+  border-radius:999px;padding:12px 18px;margin-bottom:18px;box-shadow:var(--shadow);
+}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{
+  width:52px;height:52px;border-radius:16px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--primary),#0ea5e9);color:#fff;font-size:24px;
+}
+.brand h1{font-size:24px;line-height:1.1}
+.brand p{color:var(--muted);font-size:13px;margin-top:2px}
+.status-pill{
+  padding:10px 14px;border-radius:999px;background:#eff6ff;color:#1d4ed8;
+  font-size:13px;font-weight:700;border:1px solid #bfdbfe;white-space:nowrap
+}
+.hero{
+  display:grid;grid-template-columns:1.4fr 0.8fr;gap:18px;align-items:stretch;
+  margin-bottom:18px;
+}
+@media(max-width:1100px){.hero{grid-template-columns:1fr}}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;transition:transform .2s ease, box-shadow .2s ease;
+}
+.card:hover{transform:translateY(-2px)}
+.hero-copy h2{font-size:34px;line-height:1.12;margin-bottom:10px}
+.hero-copy p{color:var(--muted);font-size:16px;line-height:1.75;max-width:920px}
+.hero-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px
+}
+@media(max-width:700px){.hero-grid{grid-template-columns:1fr}}
+.mini{
+  background:linear-gradient(180deg,#f8fbff,#eff6ff);border:1px solid #dbeafe;border-radius:18px;padding:16px
+}
+.mini strong{display:block;font-size:15px;margin-bottom:6px}
+.mini span{color:var(--muted);font-size:13px;line-height:1.5}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 13px;border-radius:999px;
+  background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:13px;font-weight:600;
+}
+.badge.soft{background:#f8fafc;color:#475569;border-color:#e2e8f0}
+.tabs{
+  display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px
+}
+.tab-btn{
+  border:none;background:#fff;color:#334155;border:1px solid #dbe4f0;padding:12px 16px;
+  border-radius:999px;cursor:pointer;font-weight:700;transition:.2s
+}
+.tab-btn.active,.tab-btn:hover{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-color:transparent}
+.section{display:none}
+.section.active{display:block}
+.grid-2{display:grid;grid-template-columns:1.2fr 0.8fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:1200px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+.field-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.field-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:8px}
+label{font-size:13px;color:#334155;font-weight:700}
+input,textarea,select{
+  width:100%;border:1px solid #d7e0eb;border-radius:14px;background:#fff;padding:14px 14px;
+  outline:none;transition:.2s;min-height:48px
+}
+textarea{min-height:120px;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:#93c5fd;box-shadow:0 0 0 4px rgba(59,130,246,.12)}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.btn{
+  border:none;cursor:pointer;font-weight:800;border-radius:14px;padding:14px 18px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;
+  box-shadow:0 12px 22px rgba(37,99,235,.18);transition:.2s
+}
+.btn.secondary{background:#fff;color:#0f172a;border:1px solid #dbe4f0;box-shadow:none}
+.btn.ghost{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;box-shadow:none}
+.btn.danger{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.small{font-size:12px;color:var(--muted);line-height:1.6}
+.callout{
+  padding:14px 16px;border-radius:16px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;line-height:1.7
+}
+.callout.blue{background:#eff6ff;color:#1e40af;border-color:#bfdbfe}
+.callout.green{background:#f0fdf4;color:#166534;border-color:#bbf7d0}
+.callout.red{background:#fef2f2;color:#991b1b;border-color:#fecaca}
+.result-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px
+}
+@media(max-width:900px){.result-grid{grid-template-columns:1fr}}
+.result-card{
+  background:var(--card-soft);border:1px solid #e2e8f0;border-radius:18px;padding:18px;line-height:1.75
+}
+.result-card h3,.section-title{font-size:22px;margin-bottom:10px}
+.section-title{margin-top:20px}
+.kv{
+  display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-bottom:1px dashed #dbe4f0
+}
+.kv:last-child{border-bottom:none}
+.kv span:first-child{color:#334155;font-weight:600}
+.kv span:last-child{font-weight:800}
+.severity{
+  display:inline-flex;align-items:center;padding:12px 14px;border-radius:14px;font-weight:800
+}
+.severity.low{background:#dcfce7;color:#166534}
+.severity.moderate{background:#fef3c7;color:#92400e}
+.severity.high{background:#fee2e2;color:#991b1b}
+.severity.emergency{background:#7f1d1d;color:#fff}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  display:inline-flex;align-items:center;padding:9px 12px;border-radius:999px;font-size:13px;
+  font-weight:700;background:#fff;border:1px solid #dbe4f0;color:#0f172a
+}
+.chip.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+.chip.ok{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+.chip.bad{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+.panel{
+  background:linear-gradient(180deg,#fff,#f8fbff);border:1px solid #dbe4f0;border-radius:18px;padding:18px
+}
+.upload-drop{
+  border:2px dashed #bfdbfe;border-radius:18px;padding:18px;background:#eff6ff;cursor:pointer
+}
+.upload-drop input{display:none}
+.preview{
+  background:#0f172a;color:#e2e8f0;padding:16px;border-radius:16px;white-space:pre-wrap;word-break:break-word;
+  max-height:360px;overflow:auto;line-height:1.75;font-size:14px
+}
+.table-wrap{overflow:auto;border:1px solid #dbe4f0;border-radius:16px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:12px 14px;border-bottom:1px solid #edf2f7;text-align:left;font-size:14px}
+th{background:#f8fbff;color:#0f172a;position:sticky;top:0}
+tr:hover td{background:#f8fbff}
+.chat-box{
+  height:320px;overflow-y:auto;border:1px solid #dbe4f0;border-radius:18px;background:#fbfdff;padding:16px
+}
+.chat-row{margin-bottom:12px;display:flex}
+.chat-row.user{justify-content:flex-end}
+.chat-bubble{
+  max-width:82%;padding:13px 14px;border-radius:16px;line-height:1.65;font-size:14px;border:1px solid #dbe4f0
+}
+.chat-row.user .chat-bubble{background:#dbeafe;color:#0f172a}
+.chat-row.ai .chat-bubble{background:#eef2ff;color:#1e1b4b}
+.map-box{height:420px;border-radius:18px;overflow:hidden;border:1px solid #dbe4f0;background:#f8fbff}
+.list{
+  display:grid;gap:10px
+}
+.item{
+  background:#fff;border:1px solid #dbe4f0;border-left:6px solid var(--primary);border-radius:16px;padding:14px 16px;line-height:1.65
+}
+.item strong{display:block;margin-bottom:4px}
+.footer-note{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.6}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid #dbe4f0;font-size:12px;font-weight:700
+}
+hr.sep{border:none;border-top:1px solid #e2e8f0;margin:16px 0}
+.hide{display:none !important}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">🏥</div>
+      <div>
+        <h1>MedIntel AI Enterprise Pro</h1>
+        <p>Report understanding, symptom triage, emergency help, nearby care, multilingual voice, and patient history.</p>
+      </div>
+    </div>
+    <div class="status-pill">Supportive AI only — not a substitute for doctor</div>
+  </div>
+
+  <div class="hero">
+    <div class="card hero-copy">
+      <h2>Build a safer medical AI experience that understands reports, not just keywords.</h2>
+      <p>
+        This single-page prototype is designed around structured medical intelligence: OCR optimization, PDF structure extraction,
+        biomarker interpretation, symptom triage, emergency detection, nearby hospitals/pharmacies/doctors on the map, language support,
+        voice input/output, and long-term patient history.
+      </p>
+
+      <div class="badge-row">
+        <span class="badge">OCR Optimization</span>
+        <span class="badge">Medical NER</span>
+        <span class="badge">Biomarker Understanding</span>
+        <span class="badge">LangChain / RAG Ready</span>
+        <span class="badge">Emergency SOS</span>
+        <span class="badge">Maps & Navigation</span>
+      </div>
+
+      <div class="hero-grid">
+        <div class="mini"><strong>Real report understanding</strong><span>Extract values like glucose, Hb, HbA1c, BP, creatinine and convert them into clinical meaning using structured parsing plus AI.</span></div>
+        <div class="mini"><strong>Safer medicine guidance</strong><span>Recommendations are filtered by age, gender, allergy, pregnancy, history, and risk context, with doctor-first language.</span></div>
+        <div class="mini"><strong>Emergency detection</strong><span>Chest pain, left arm numbness, sweating, breathing trouble, stroke signs, severe dehydration, or confusion can trigger urgent care.</span></div>
+        <div class="mini"><strong>Voice & multilingual UX</strong><span>Hindi / English / Bengali / Tamil / Kannada support with speech-to-text and text-to-speech for elder-friendly use.</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:12px;">Patient profile snapshot</h3>
+      <div class="field-grid">
+        <div class="field">
+          <label>Age</label>
+          <input type="number" id="age" placeholder="5, 20, 45..." min="0">
+        </div>
+        <div class="field">
+          <label>Gender</label>
+          <select id="gender">
+            <option value="">Select</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Weight (kg)</label>
+          <input type="number" id="weight" placeholder="kg" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label>Allergy</label>
+          <input type="text" id="allergy" placeholder="e.g., penicillin">
+        </div>
+        <div class="field">
+          <label>Pregnancy</label>
+          <select id="pregnancy">
+            <option value="">Unknown / N.A.</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Language</label>
+          <select id="lang">
+            <option value="en-IN">English</option>
+            <option value="hi-IN">Hindi</option>
+            <option value="bn-IN">Bengali</option>
+            <option value="ta-IN">Tamil</option>
+            <option value="kn-IN">Kannada</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn secondary" type="button" onclick="saveProfile()">Save profile</button>
+        <button class="btn ghost" type="button" onclick="loadDemoReport()">Load demo report</button>
+        <button class="btn danger" type="button" onclick="clearAllData()">Clear local history</button>
+      </div>
+      <div class="footer-note">Profile data is stored locally in the browser for the prototype. Connect it to PostgreSQL / MongoDB in the backend for production.</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="reportSection" onclick="openTab(this)">Report Intelligence</button>
+    <button class="tab-btn" data-tab="symptomSection" onclick="openTab(this)">Symptom Checker</button>
+    <button class="tab-btn" data-tab="careSection" onclick="openTab(this)">Nearby Care & SOS</button>
+    <button class="tab-btn" data-tab="chatSection" onclick="openTab(this)">AI Chat & History</button>
+    <button class="tab-btn" data-tab="settingsSection" onclick="openTab(this)">Auth & Language</button>
+  </div>
+
+  <section id="reportSection" class="section active">
+    <div class="grid-2">
+      <div class="card">
+        <h2>📄 Medical report intelligence</h2>
+        <p class="small">Upload an image, PDF, or pasted OCR text. The front end will try backend analysis first and then fall back to local parsing for demo use.</p>
+
+        <div class="field-grid" style="margin-top:14px">
+          <div class="field">
+            <label>Report type</label>
+            <select id="reportType">
+              <option value="general">General lab / medical report</option>
+              <option value="prescription">Prescription</option>
+              <option value="discharge">Discharge summary</option>
+              <option value="pathology">Pathology / CBC / Biochemistry</option>
+              <option value="radiology">Radiology / Imaging</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>OCR mode</label>
+            <select id="ocrMode">
+              <option value="auto">Auto</option>
+              <option value="document_ai">Document AI / PDF structure</option>
+              <option value="tesseract">OCR text extraction</option>
+              <option value="hybrid">Hybrid OCR + layout</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Analysis focus</label>
+            <select id="analysisFocus">
+              <option value="full">Full report understanding</option>
+              <option value="biomarkers">Biomarkers / lab values</option>
+              <option value="prescription">Prescription safety</option>
+              <option value="triage">Risk & urgency</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-grid" style="margin-top:12px">
+          <div class="field">
+            <label>Patient name</label>
+            <input type="text" id="patientName" placeholder="Enter patient name">
+          </div>
+          <div class="field">
+            <label>Symptoms summary</label>
+            <input type="text" id="summarySymptoms" placeholder="e.g., fever, cough, pain">
+          </div>
+          <div class="field">
+            <label>Medical history</label>
+            <input type="text" id="medicalHistory" placeholder="e.g., diabetes, asthma">
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:12px">
+          <label>Upload report / image / PDF</label>
+          <label class="upload-drop" for="fileInput">
+            <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.doc,.docx" />
+            <strong>Click to upload or choose a file</strong>
+            <div class="small">For better results, use a clear scan or PDF. The backend can do OCR, layout parsing, and medical NER.</div>
+          </label>
+        </div>
+
+        <div class="field" style="margin-top:12px">
+          <label>Paste OCR text or raw report text (optional fallback)</label>
+          <textarea id="ocrText" placeholder="Paste the extracted text here for local demo parsing..."></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="button" id="analyzeBtn" onclick="analyzeReport()">Analyze report</button>
+          <button class="btn secondary" type="button" onclick="extractStructure()">Extract PDF structure</button>
+          <button class="btn ghost" type="button" onclick="speakCurrentSummary()">Speak summary</button>
+        </div>
+
+        <div id="loadingBox" class="callout blue hide" style="margin-top:14px">Analyzing report with OCR, layout extraction, medical NER, and clinical reasoning…</div>
+        <div id="reportMeta" class="badge-row" style="margin-top:14px"></div>
+      </div>
+
+      <div class="card">
+        <h2>🧠 Output hierarchy</h2>
+        <div class="panel">
+          <div class="small">The report should be interpreted in layers:</div>
+          <div class="badge-row" style="margin-top:10px">
+            <span class="badge soft">1. OCR text</span>
+            <span class="badge soft">2. Layout / sections</span>
+            <span class="badge soft">3. Medical entities</span>
+            <span class="badge soft">4. Biomarker meaning</span>
+            <span class="badge soft">5. Safety filters</span>
+            <span class="badge soft">6. Suggested next steps</span>
+          </div>
+          <hr class="sep">
+          <div class="callout blue">
+            <strong>Example:</strong> glucose 260 → high blood sugar / diabetes risk; haemoglobin 8 → anemia risk; blood pressure 160/100 → hypertension concern.
+          </div>
+          <div class="callout green" style="margin-top:12px">
+            <strong>Safety-first medicines:</strong> age, weight, allergies, pregnancy, chronic disease, and report context must be checked before any suggestion is shown.
+          </div>
+          <div class="callout red" style="margin-top:12px">
+            <strong>Important:</strong> Handwritten prescriptions in India should not be auto-turned into a fake prescription. The app should only extract and explain, then suggest doctor review.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="reportResults" style="margin-top:18px"></div>
+  </section>
+
+  <section id="symptomSection" class="section">
+    <div class="grid-2">
+      <div class="card">
+        <h2>🤖 Symptom checker AI</h2>
+        <p class="small">Describe symptoms in plain language. The checker should return possible causes, urgency level, and recommended tests or action steps.</p>
+
+        <div class="field-grid" style="margin-top:14px">
+          <div class="field">
+            <label>Duration</label>
+            <input type="text" id="symptomDuration" placeholder="e.g., 3 days">
+          </div>
+          <div class="field">
+            <label>Temperature</label>
+            <input type="text" id="temperature" placeholder="e.g., 102 F">
+          </div>
+          <div class="field">
+            <label>Location / body area</label>
+            <input type="text" id="painArea" placeholder="e.g., chest, abdomen, head">
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:12px">
+          <label>Symptoms</label>
+          <textarea id="symptomsInput" placeholder="e.g., fever since 3 days, body pain, vomiting"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="button" onclick="checkSymptoms()">Check symptoms</button>
+          <button class="btn secondary" type="button" onclick="startVoiceTo('symptomsInput')">Voice input</button>
+          <button class="btn ghost" type="button" onclick="speakElement('symptomResult')">Speak result</button>
+        </div>
+
+        <div class="footer-note">Examples: viral fever, dengue, food poisoning, dehydration, emergency chest-pain patterns, or routine care advice.</div>
+      </div>
+
+      <div class="card">
+        <h2>⚠ Emergency detection engine</h2>
+        <div id="emergencyStatus" class="callout blue">No emergency signal yet.</div>
+        <div style="margin-top:14px" class="list">
+          <div class="item"><strong>High risk patterns</strong>Chest pain + left arm numbness + sweating, stroke signs, breathing trouble, severe bleeding, confusion, or very low consciousness.</div>
+          <div class="item"><strong>What the AI should say</strong>Possible heart attack risk. Seek emergency care immediately. Trigger SOS, nearest ambulance, and one-tap navigation.</div>
+          <div class="item"><strong>SOS feature</strong>Emergency contacts, nearest ICU, nearby ambulance, and navigation shortcuts should be visible together.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="symptomResult" style="margin-top:18px"></div>
+  </section>
+
+  <section id="careSection" class="section">
+    <div class="grid-2">
+      <div class="card">
+        <h2>🗺 Nearby doctor, hospital, pharmacy & emergency map</h2>
+        <p class="small">This uses geolocation + OpenStreetMap Leaflet view. It can also open Google Maps / OSM navigation links and search nearby specialties.</p>
+
+        <div class="field-grid" style="margin-top:14px">
+          <div class="field">
+            <label>Search category</label>
+            <select id="careType">
+              <option value="hospital">Hospital / Clinic</option>
+              <option value="pharmacy">Pharmacy</option>
+              <option value="cardiologist">Cardiologist</option>
+              <option value="dentist">Dentist</option>
+              <option value="neurologist">Neurologist</option>
+              <option value="pathology">Pathology / Lab</option>
+              <option value="ambulance">Ambulance / Emergency</option>
+              <option value="icu">Nearest ICU / Emergency care</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Radius (meters)</label>
+            <input type="number" id="radius" value="5000" min="500" step="500">
+          </div>
+          <div class="field">
+            <label>Related disease focus</label>
+            <input type="text" id="diseaseFocus" placeholder="e.g., cardiac, diabetes, asthma">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="button" onclick="findNearbyCare()">Find nearby care</button>
+          <button class="btn secondary" type="button" onclick="openGoogleMaps()">Open Google Maps</button>
+          <button class="btn ghost" type="button" onclick="openOSM()">Open OpenStreetMap</button>
+          <button class="btn danger" type="button" onclick="triggerSOS()">SOS</button>
+        </div>
+
+        <div class="footer-note" id="locationStatus">Location pending…</div>
+      </div>
+
+      <div class="card">
+        <h2>🚑 Emergency shortcuts</h2>
+        <div class="list">
+          <div class="item"><strong>Emergency number</strong><a href="tel:112">Call 112</a> (edit for local region).</div>
+          <div class="item"><strong>Ambulance</strong><a href="tel:108">Call 108</a> (India emergency ambulance number in many states).</div>
+          <div class="item"><strong>Nearest hospital</strong>Generated from your current location on the map and in the list below.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <div id="map" class="map-box"></div>
+      <div class="grid-2" style="margin-top:16px">
+        <div>
+          <h3 class="section-title">Nearby results</h3>
+          <div id="careList" class="list"></div>
+        </div>
+        <div>
+          <h3 class="section-title">Quick navigation</h3>
+          <div id="quickNav" class="list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="chatSection" class="section">
+    <div class="grid-2">
+      <div class="card">
+        <h2>💬 AI medical chatbot</h2>
+        <p class="small">The chatbot should remember prior report context, explain medicines and diseases, answer diet questions, and support multilingual conversation.</p>
+
+        <div id="chatMessages" class="chat-box" style="margin-top:14px"></div>
+
+        <div class="field" style="margin-top:14px">
+          <label>Ask something</label>
+          <textarea id="chatInput" placeholder="Can I eat rice in diabetes? Explain my report. What are the precautions?"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="button" onclick="sendChat()">Send</button>
+          <button class="btn secondary" type="button" onclick="startVoiceTo('chatInput')">Voice input</button>
+          <button class="btn ghost" type="button" onclick="speakElement('chatMessages')">Speak last reply</button>
+        </div>
+
+        <div class="small" style="margin-top:10px">Example response: “Yes, in controlled quantity. Prefer brown rice. Keep portion sizes small and pair with protein/fiber.”</div>
+      </div>
+
+      <div class="card">
+        <h2>📚 Medical history & trend memory</h2>
+        <p class="small">Store sugar, BP, symptoms, medicines, and recurring issues in local history now; connect to a real database later.</p>
+        <div class="actions">
+          <button class="btn secondary" type="button" onclick="seedTrendData()">Add demo trend data</button>
+          <button class="btn ghost" type="button" onclick="exportHistory()">Export JSON</button>
+          <button class="btn danger" type="button" onclick="clearTrendData()">Clear trends</button>
+        </div>
+
+        <div class="grid-2" style="margin-top:14px">
+          <div class="panel">
+            <strong>Sugar trend</strong>
+            <canvas id="sugarChart" height="180"></canvas>
+          </div>
+          <div class="panel">
+            <strong>BP trend</strong>
+            <canvas id="bpChart" height="180"></canvas>
+          </div>
+        </div>
+
+        <div style="margin-top:14px" class="result-card">
+          <h3>Saved history summary</h3>
+          <div id="historySummary" class="small">No history saved yet.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="settingsSection" class="section">
+    <div class="grid-2">
+      <div class="card">
+        <h2>🔐 Authentication & access profiles</h2>
+        <p class="small">For production, connect these actions to PostgreSQL / MongoDB and a proper auth backend.</p>
+
+        <div class="field-grid" style="margin-top:14px">
+          <div class="field">
+            <label>User role</label>
+            <select id="role">
+              <option>Patient</option>
+              <option>Doctor</option>
+              <option>Family member</option>
+              <option>Admin</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Login ID</label>
+            <input type="text" id="loginId" placeholder="phone, email, hospital id">
+          </div>
+          <div class="field">
+            <label>Password / OTP</label>
+            <input type="password" id="loginSecret" placeholder="Password or OTP">
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label>Backend API URL</label>
+          <input type="url" id="apiBaseInput" placeholder="https://your-backend-domain.onrender.com">
+          <div class="small">Save your deployed FastAPI URL here once. The app will remember it in this browser.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="button" onclick="saveApiBaseFromInput()">Save API URL</button>
+          <button class="btn secondary" type="button" onclick="testBackendConnection()">Test backend</button>
+          <button class="btn ghost" type="button" onclick="demoLogin()">Login</button>
+          <button class="btn secondary" type="button" onclick="saveFamilyProfile()">Save family profile</button>
+          <button class="btn ghost" type="button" onclick="toggleVoice()">Toggle speech output</button>
+        </div>
+
+        <div class="footer-note">Use patient, doctor, and family views to control report visibility, prescriptions, consent, and emergency sharing.</div>
+        <div id="apiBaseStatus" class="small" style="margin-top:8px;font-weight:700;color:#1d4ed8;"></div>
+      </div>
+
+      <div class="card">
+        <h2>🌐 Multilingual and accessibility controls</h2>
+        <div class="field-grid" style="margin-top:14px">
+          <div class="field">
+            <label>Language</label>
+            <select id="uiLanguage">
+              <option value="en-IN">English</option>
+              <option value="hi-IN">Hindi</option>
+              <option value="bn-IN">Bengali</option>
+              <option value="ta-IN">Tamil</option>
+              <option value="kn-IN">Kannada</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Voice output style</label>
+            <select id="voiceStyle">
+              <option value="normal">Normal</option>
+              <option value="slow">Slow / elder-friendly</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Text size</label>
+            <select id="textScale" onchange="applyScale()">
+              <option value="1">Normal</option>
+              <option value="1.08">Large</option>
+              <option value="1.15">Extra large</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="callout blue" style="margin-top:14px">
+          Keep the UI simple, voice-enabled, and high-contrast so elder users can use speech-to-text, read large text, and hear medicine names.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="card" style="margin-top:18px">
+    <strong>Backend endpoints this front end expects</strong>
+    <div class="small" style="margin-top:8px;line-height:1.8">
+      /analyze-report or /analyze, /chat, /triage, /nearby-care, /sos, /auth/login, /auth/register, /history, /export, /prescription-safety.
+      The UI will still show local demo parsing if a backend is not connected.
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_API_BASE = window.MEDINTEL_DEFAULT_API_BASE || 'http://localhost:8000';
+let API_BASE = (localStorage.getItem('medintel_api_base') || window.MEDINTEL_API_BASE || DEFAULT_API_BASE).replace(/\/+$/, '');
+
+function updateApiBaseStatus() {
+  const status = document.getElementById('apiBaseStatus');
+  const input = document.getElementById('apiBaseInput');
+  if (input && input.value !== API_BASE) input.value = API_BASE;
+  if (status) status.textContent = `Backend API: ${API_BASE}`;
+}
+
+function setApiBase(base) {
+  const cleaned = String(base || '').trim().replace(/\/+$/, '');
+  if (!cleaned) return false;
+  API_BASE = cleaned;
+  localStorage.setItem('medintel_api_base', API_BASE);
+  updateApiBaseStatus();
+  return true;
+}
+
+function loadApiBaseFromStorage() {
+  const stored = localStorage.getItem('medintel_api_base') || window.MEDINTEL_API_BASE || DEFAULT_API_BASE;
+  API_BASE = String(stored).trim().replace(/\/+$/, '');
+  return API_BASE;
+}
+
+async function testBackendConnection() {
+  try {
+    const data = await fetchJson(`${API_BASE}/health`);
+    toast(data?.status ? `Backend connected: ${data.status}` : 'Backend connected');
+  } catch (error) {
+    console.error(error);
+    toast('Backend connection failed. Check the API URL.');
+  }
+}
+
+function saveApiBaseFromInput() {
+  const input = document.getElementById('apiBaseInput');
+  if (!input) return;
+  const ok = setApiBase(input.value);
+  if (ok) {
+    toast('Backend API URL saved.');
+  } else {
+    toast('Please enter a valid backend URL.');
+  }
+}
+
+
+const state = {
+  map: null,
+  userLat: null,
+  userLng: null,
+  markers: [],
+  charts: {},
+  speechEnabled: true,
+  selectedSpeechText: ''
+};
+
+function escapeHTML(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function nl2br(str) {
+  return escapeHTML(str).replace(/\n/g, '<br>');
+}
+
+function openTab(btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+}
+
+function getValue(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function setValue(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.value = value ?? '';
+}
+
+function showLoading(show) {
+  document.getElementById('loadingBox').classList.toggle('hide', !show);
+  document.getElementById('analyzeBtn').disabled = show;
+}
+
+function setReportMeta(tags) {
+  const box = document.getElementById('reportMeta');
+  box.innerHTML = (tags || []).map(t => `<span class="pill">${escapeHTML(t)}</span>`).join('');
+}
+
+function readProfile() {
+  return {
+    patientName: getValue('patientName'),
+    age: getValue('age'),
+    gender: getValue('gender'),
+    weight: getValue('weight'),
+    allergy: getValue('allergy'),
+    pregnancy: getValue('pregnancy'),
+    lang: getValue('lang') || 'en-IN',
+    medicalHistory: getValue('medicalHistory'),
+    summarySymptoms: getValue('summarySymptoms'),
+    diseaseFocus: getValue('diseaseFocus'),
+  };
+}
+
+function saveProfile() {
+  localStorage.setItem('medintel_profile', JSON.stringify(readProfile()));
+  toast('Profile saved locally.');
+}
+
+function saveFamilyProfile() {
+  const data = {
+    role: getValue('role'),
+    loginId: getValue('loginId'),
+    savedAt: new Date().toISOString()
+  };
+  localStorage.setItem('medintel_family_profile', JSON.stringify(data));
+  toast('Family profile saved locally.');
+}
+
+function demoLogin() {
+  const role = getValue('role');
+  const loginId = getValue('loginId');
+  if (!loginId) {
+    toast('Enter login ID first.');
+    return;
+  }
+  localStorage.setItem('medintel_login', JSON.stringify({ role, loginId, time: new Date().toISOString() }));
+  toast(`${role} login saved locally.`);
+}
+
+function applyScale() {
+  const scale = parseFloat(getValue('textScale') || '1');
+  document.body.style.fontSize = `${16 * scale}px`;
+}
+
+function toast(message) {
+  const box = document.getElementById('reportMeta');
+  box.innerHTML = `<span class="pill">${escapeHTML(message)}</span>`;
+  setTimeout(() => {
+    if (box.innerHTML.includes(escapeHTML(message))) box.innerHTML = '';
+  }, 2500);
+}
+
+async function fetchJson(url, options) {
+  const response = await fetch(url, options);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return await response.json();
+}
+
+function buildFormData() {
+  const file = document.getElementById('fileInput').files[0];
+  const formData = new FormData();
+  if (file) formData.append('file', file);
+  const profile = readProfile();
+  formData.append('patient_name', profile.patientName || '');
+  formData.append('ocr_text', getValue('ocrText'));
+  formData.append('report_type', getValue('reportType'));
+  formData.append('ocr_mode', getValue('ocrMode'));
+  formData.append('analysis_focus', getValue('analysisFocus'));
+  formData.append('age', profile.age);
+  formData.append('gender', profile.gender);
+  formData.append('weight', profile.weight);
+  formData.append('allergy', profile.allergy);
+  formData.append('pregnancy', profile.pregnancy);
+  formData.append('language', profile.lang);
+  formData.append('medical_history', profile.medicalHistory);
+  formData.append('symptoms', profile.summarySymptoms);
+  return formData;
+}
+
+function parseLabs(text) {
+  const t = String(text || '');
+  const labs = [];
+  const add = (test, value, status, note) => labs.push({ test, value, status, note });
+
+  const glucose = t.match(/(?:blood\s*sugar|glucose|bs)\s*[:=]?\s*(\d{2,3}(?:\.\d+)?)\b/i);
+  if (glucose) {
+    const value = parseFloat(glucose[1]);
+    add('Glucose', value, value >= 200 ? 'High' : value >= 140 ? 'Borderline' : 'Normal', value >= 200 ? 'Suggests diabetes-risk range or uncontrolled sugar' : 'Monitor');
+  }
+
+  const hba1c = t.match(/(?:hba1c|a1c)\s*[:=]?\s*(\d+(?:\.\d+)?)\b/i);
+  if (hba1c) {
+    const value = parseFloat(hba1c[1]);
+    add('HbA1c', value, value >= 6.5 ? 'High' : value >= 5.7 ? 'Borderline' : 'Normal', value >= 6.5 ? 'Diabetes-range glycemic marker' : 'Monitor');
+  }
+
+  const hb = t.match(/(?:haemoglobin|hemoglobin|hb)\s*[:=]?\s*(\d+(?:\.\d+)?)\b/i);
+  if (hb) {
+    const value = parseFloat(hb[1]);
+    add('Hemoglobin', value, value < 10 ? 'Low' : value < 12 ? 'Borderline' : 'Normal', value < 10 ? 'Anemia risk' : 'Monitor');
+  }
+
+  const bp = t.match(/(?:bp|blood pressure)\s*[:=]?\s*(\d{2,3})\s*\/\s*(\d{2,3})/i);
+  if (bp) {
+    const sys = parseInt(bp[1], 10);
+    const dia = parseInt(bp[2], 10);
+    const status = (sys >= 140 || dia >= 90) ? 'High' : (sys >= 130 || dia >= 80) ? 'Borderline' : 'Normal';
+    add('Blood Pressure', `${sys}/${dia}`, status, status === 'High' ? 'Hypertension concern' : 'Monitor');
+  }
+
+  const cr = t.match(/(?:creatinine|creat)\s*[:=]?\s*(\d+(?:\.\d+)?)\b/i);
+  if (cr) {
+    const value = parseFloat(cr[1]);
+    add('Creatinine', value, value > 1.3 ? 'High' : 'Normal', value > 1.3 ? 'Kidney function review suggested' : 'Monitor');
+  }
+
+  const temp = t.match(/(?:temperature|fever)\s*[:=]?\s*(\d+(?:\.\d+)?)\s*(?:f|c)?/i);
+  if (temp) {
+    const value = parseFloat(temp[1]);
+    add('Temperature', value, value >= 38 ? 'Fever' : 'Normal', value >= 38 ? 'Infection/inflammation possible' : 'Monitor');
+  }
+
+  return labs;
+}
+
+function interpretReport(text, profile = {}) {
+  const raw = String(text || '').toLowerCase();
+  const labs = parseLabs(text);
+  const conditions = [];
+  const diet = [];
+  const medicines = [];
+  const risks = [];
+  const actions = [];
+  let severity = 'Low';
+
+  const emergencyPatterns = [
+    { p: /chest pain|pressure in chest/i, label: 'Chest pain' },
+    { p: /left arm numbness|arm numbness|jaw pain/i, label: 'Arm/jaw symptoms' },
+    { p: /sweating|cold sweat/i, label: 'Sweating' },
+    { p: /shortness of breath|difficulty breathing|breathing trouble/i, label: 'Breathing difficulty' },
+    { p: /stroke|facial droop|slurred speech|one side weak/i, label: 'Stroke-like signs' },
+    { p: /unconscious|loss of consciousness|seizure/i, label: 'Loss of consciousness' },
+    { p: /severe bleeding|vomit blood|black stool/i, label: 'Severe bleeding' },
+  ];
+
+  const emergencyHits = emergencyPatterns.filter(x => x.p.test(raw)).map(x => x.label);
+  if (emergencyHits.length) {
+    severity = 'Emergency';
+    risks.push('Emergency red flags detected');
+    actions.push('Seek emergency care immediately');
+    actions.push('Use SOS, ambulance, or nearest ICU navigation');
+  }
+
+  if (/glucose|blood sugar|diabetes|sugar/.test(raw)) {
+    const g = labs.find(x => x.test === 'Glucose');
+    if (g && g.status === 'High') {
+      conditions.push('Possible uncontrolled diabetes / high blood sugar');
+      diet.push('Avoid sugary drinks and desserts');
+      diet.push('Prefer fiber-rich foods, portion control, and hydration');
+      actions.push('Check fasting glucose and HbA1c with doctor');
+    }
+  }
+
+  if (/hemoglobin|haemoglobin|hb/.test(raw)) {
+    const h = labs.find(x => x.test === 'Hemoglobin');
+    if (h && h.status === 'Low') {
+      conditions.push('Anemia risk');
+      diet.push('Iron-rich foods, vitamin C support, and repeat CBC review');
+      actions.push('Review CBC, ferritin, iron studies');
+    }
+  }
+
+  if (/bp|blood pressure|hypertension/.test(raw)) {
+    const b = labs.find(x => x.test === 'Blood Pressure');
+    if (b && b.status === 'High') {
+      conditions.push('High blood pressure concern');
+      diet.push('Low-salt diet, reduce ultra-processed foods');
+      actions.push('Repeat BP measurements and consult doctor');
+    }
+  }
+
+  if (/vomit|vomiting|diarrhoea|diarrhea/.test(raw)) {
+    conditions.push('Gastrointestinal infection / food poisoning possible');
+    diet.push('Oral rehydration and bland foods');
+    actions.push('Monitor dehydration signs');
+    if (severity !== 'Emergency') severity = 'Moderate';
+  }
+
+  if (/fever/.test(raw)) {
+    conditions.push('Viral fever / infection possible');
+    diet.push('Hydration, soft meals, avoid heavy oily food');
+    actions.push('CBC / dengue test if indicated');
+    if (severity === 'Low') severity = 'Moderate';
+  }
+
+  if (/kidney|creatinine|renal/.test(raw)) {
+    conditions.push('Kidney function review may be needed');
+    diet.push('Consider low-potassium / low-salt guidance if advised by doctor');
+    actions.push('Review creatinine, urea, electrolytes');
+    if (severity === 'Low') severity = 'Moderate';
+  }
+
+  if (!conditions.length) conditions.push('No strong structured pattern detected yet');
+  if (!diet.length) diet.push('Balanced meals, hydration, and doctor review for abnormal results');
+  if (!actions.length) actions.push('Use complete report context and clinical review');
+
+  const meds = buildMedicineSuggestions(profile, labs, raw, severity);
+  const summary = buildSummary(labs, conditions, severity);
+
+  return {
+    severity,
+    labs,
+    conditions,
+    diet,
+    medicines: meds,
+    risks: [...new Set([...risks, ...emergencyHits])],
+    actions,
+    summary,
+    emergency: severity === 'Emergency'
+  };
+}
+
+function buildMedicineSuggestions(profile, labs, raw, severity) {
+  const age = parseFloat(profile.age || 0);
+  const weight = parseFloat(profile.weight || 0);
+  const allergy = (profile.allergy || '').toLowerCase();
+  const pregnancy = (profile.pregnancy || '').toLowerCase();
+  const suggestions = [];
+
+  const hasFever = /fever|temperature/.test(raw.toLowerCase());
+  const hasPain = /pain|body ache|headache/.test(raw.toLowerCase());
+  const hasDiabetes = /diabetes|glucose|blood sugar|hba1c/.test(raw.toLowerCase());
+
+  if (hasFever) {
+    suggestions.push({
+      name: 'Paracetamol / acetaminophen (doctor-confirmed)',
+      usage: age <= 12 ? 'Pediatric fever option; dose must be weight-based and confirmed by doctor/pharmacist.' : 'Common fever/pain option; follow label or doctor instructions.',
+      dosage: age <= 12 ? (weight ? `Weight-based dosing required for ${weight} kg child.` : 'Need weight to calculate safely.') : 'Avoid exceeding labeled daily limit.'
+    });
+  }
+
+  if (hasPain) {
+    suggestions.push({
+      name: 'Supportive pain relief',
+      usage: 'Only after checking allergy, pregnancy, stomach/kidney history, and current medicines.',
+      dosage: 'Let the backend / clinician enforce interaction checks.'
+    });
+  }
+
+  if (hasDiabetes) {
+    suggestions.push({
+      name: 'Sugar-safe medication check',
+      usage: 'Avoid sugary syrups where possible for diabetes patients; verify excipients and sweeteners.',
+      dosage: 'Choose sugar-free formulations when appropriate.'
+    });
+  }
+
+  if (/cough|cold/.test(raw.toLowerCase())) {
+    suggestions.push({
+      name: 'Cold / cough symptomatic review',
+      usage: 'Avoid sedating medicines in elderly unless appropriate; check blood pressure and diabetes compatibility.',
+      dosage: 'Use clinician-approved formulations.'
+    });
+  }
+
+  if (!suggestions.length) {
+    suggestions.push({
+      name: 'No medicine auto-suggestion',
+      usage: 'No safe automated medicine suggestion detected from the current text.',
+      dosage: 'Please consult a doctor or pharmacist.'
+    });
+  }
+
+  if (allergy) {
+    suggestions.push({
+      name: 'Allergy filter applied',
+      usage: `Reported allergy: ${allergy}. Backend should block incompatible medicines.`,
+      dosage: 'Show only safer alternatives.'
+    });
+  }
+
+  if (pregnancy === 'yes') {
+    suggestions.push({
+      name: 'Pregnancy safety filter applied',
+      usage: 'Show only pregnancy-safe options approved by the clinician.',
+      dosage: 'Avoid self-medication.'
+    });
+  }
+
+  if (severity === 'Emergency') {
+    suggestions.unshift({
+      name: 'Emergency care only',
+      usage: 'Do not delay hospital evaluation for medicine suggestions.',
+      dosage: 'Use SOS / ambulance / urgent care.'
+    });
+  }
+
+  return suggestions;
+}
+
+function buildSummary(labs, conditions, severity) {
+  const labLines = labs.map(l => `${l.test}: ${l.value} (${l.status})`).join(' | ');
+  return `Severity: ${severity}\n${labLines || 'No key labs found'}\nPossible: ${conditions.join('; ')}`;
+}
+
+function renderReport(result, extractedText = '', profile = {}) {
+  state.selectedSpeechText = `${result.summary}\n${result.actions.join('. ')}`;
+  const severityClass = result.severity === 'Emergency' ? 'emergency' :
+                        result.severity === 'High' ? 'high' :
+                        result.severity === 'Moderate' ? 'moderate' : 'low';
+
+  const cards = `
+    <div class="card">
+      <div class="toolbar">
+        <h2>📊 Report interpretation</h2>
+        <span class="severity ${severityClass.toLowerCase()}">${escapeHTML(result.severity)}</span>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-card">
+          <h3>Extracted text</h3>
+          <div class="preview">${nl2br(extractedText || 'No text extracted yet. Paste OCR text or connect the backend.')}</div>
+        </div>
+        <div class="result-card">
+          <h3>Clinical summary</h3>
+          <div class="callout blue">${nl2br(result.summary)}</div>
+          <div class="footer-note">This is not a diagnosis. Use it to prioritize next steps and doctor review.</div>
+        </div>
+      </div>
+
+      <h3 class="section-title">Detected biomarkers</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Test</th><th>Value</th><th>Status</th><th>Meaning</th></tr></thead>
+          <tbody>
+            ${result.labs.length ? result.labs.map(l => `
+              <tr>
+                <td>${escapeHTML(l.test)}</td>
+                <td>${escapeHTML(l.value)}</td>
+                <td>${escapeHTML(l.status)}</td>
+                <td>${escapeHTML(l.note)}</td>
+              </tr>`).join('') : `<tr><td colspan="4">No biomarker value recognized yet</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-card">
+          <h3>Possible conditions</h3>
+          <div class="chip-wrap">${result.conditions.map(x => `<span class="chip warn">${escapeHTML(x)}</span>`).join('')}</div>
+        </div>
+        <div class="result-card">
+          <h3>Risk flags</h3>
+          <div class="chip-wrap">${(result.risks.length ? result.risks : ['No emergency pattern detected']).map(x => `<span class="chip ${result.emergency ? 'bad' : 'ok'}">${escapeHTML(x)}</span>`).join('')}</div>
+        </div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-card">
+          <h3>Suggested next steps</h3>
+          <div class="list">${result.actions.map(a => `<div class="item">${escapeHTML(a)}</div>`).join('')}</div>
+        </div>
+        <div class="result-card">
+          <h3>Diet guidance</h3>
+          <div class="list">${result.diet.map(d => `<div class="item">${escapeHTML(d)}</div>`).join('')}</div>
+        </div>
+      </div>
+
+      <h3 class="section-title">Safe medicine suggestions</h3>
+      <div class="list">
+        ${result.medicines.map(m => `
+          <div class="item">
+            <strong>${escapeHTML(m.name)}</strong>
+            <div>${escapeHTML(m.usage)}</div>
+            <div class="small">${escapeHTML(m.dosage)}</div>
+          </div>`).join('')}
+      </div>
+
+      <div class="callout ${result.emergency ? 'red' : 'green'}" style="margin-top:16px">
+        <strong>Medical disclaimer:</strong> ${escapeHTML('AI-generated suggestions are supportive only and must not replace a doctor, especially for children, pregnancy, emergencies, or prescription decisions.')}
+      </div>
+    </div>
+  `;
+  document.getElementById('reportResults').innerHTML = cards;
+  setReportMeta([
+    profile.age ? `Age: ${profile.age}` : 'Age not set',
+    profile.gender ? `Gender: ${profile.gender}` : 'Gender not set',
+    profile.lang ? `Language: ${profile.lang}` : 'Language: en-IN',
+    `Severity: ${result.severity}`
+  ]);
+  saveTrendFromResult(result);
+  updateHistorySummary();
+}
+
+async function analyzeReport() {
+  const profile = readProfile();
+  showLoading(true);
+  try {
+    const formData = buildFormData();
+    let data = null;
+    const endpoints = [`${API_BASE}/analyze-report`, `${API_BASE}/analyze`];
+    for (const endpoint of endpoints) {
+      try {
+        data = await fetchJson(endpoint, { method: 'POST', body: formData });
+        break;
+      } catch (e) {}
+    }
+
+    if (data) {
+      const extractedText = data.extracted_text || getValue('ocrText') || '';
+      const result = {
+        severity: data.severity || (data.emergency ? 'Emergency' : 'Low'),
+        labs: data.lab_findings || data.biomarkers || [],
+        conditions: data.conditions || data.possible_conditions || [],
+        diet: data.diet_advice || data.diet || [],
+        medicines: data.suggested_medicines || data.medicines || [],
+        risks: data.risks || data.flags || [],
+        actions: data.actions || data.next_steps || [],
+        summary: data.summary || data.report_summary || 'Backend analysis completed.',
+        emergency: Boolean(data.emergency || /emergency/i.test(String(data.severity || '')))
+      };
+      renderReport(result, extractedText, profile);
+      return;
+    }
+
+    const text = getValue('ocrText') || await fallbackTextFromFile();
+    const result = interpretReport(text, profile);
+    renderReport(result, text, profile);
+    toast('Local fallback analysis completed.');
+  } catch (error) {
+    console.error(error);
+    const text = getValue('ocrText') || '';
+    const result = interpretReport(text, profile);
+    renderReport(result, text, profile);
+    toast('Backend unavailable. Local parsing used.');
+  } finally {
+    showLoading(false);
+  }
+}
+
+async function fallbackTextFromFile() {
+  const file = document.getElementById('fileInput').files[0];
+  if (!file) return '';
+  if (file.type.startsWith('text/')) return await file.text();
+  return `Uploaded file: ${file.name}\n(Use backend OCR / PDF structure extraction for full text.)`;
+}
+
+function extractStructure() {
+  const text = getValue('ocrText');
+  const sections = [
+    ['Patient info', /patient|name|age|sex|gender/i],
+    ['Vitals', /bp|blood pressure|pulse|temperature|spo2/i],
+    ['Biochemistry', /glucose|sugar|hba1c|creatinine|urea|sodium|potassium/i],
+    ['CBC / Hematology', /hemoglobin|haemoglobin|wbc|rbc|platelet|platelets/i],
+    ['Prescription', /rx|tablet|cap|syrup|dose|dosage/i],
+    ['Imaging', /x-ray|ct|mri|ultrasound|scan/i],
+  ];
+  const found = sections.filter(s => s[1].test(text || getValue('ocrText'))).map(s => s[0]);
+  const html = `
+    <div class="card" style="margin-top:18px">
+      <h2>🧩 PDF / report structure extraction</h2>
+      <div class="result-grid">
+        <div class="result-card">
+          <h3>Recognized sections</h3>
+          <div class="chip-wrap">${(found.length ? found : ['No section pattern recognized']).map(x => `<span class="chip">${escapeHTML(x)}</span>`).join('')}</div>
+        </div>
+        <div class="result-card">
+          <h3>Recommended backend pipeline</h3>
+          <div class="list">
+            <div class="item"><strong>Layout OCR</strong>Use OCR + page segmentation for tables, headers, and signatures.</div>
+            <div class="item"><strong>Medical NER</strong>Use BioBERT / ClinicalBERT / MedBERT style NER to tag lab values, symptoms, and drugs.</div>
+            <div class="item"><strong>Reasoning layer</strong>Use an LLM such as Llama 3 or Mistral with guardrails, retrieval, and structured prompts.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('reportResults').insertAdjacentHTML('beforeend', html);
+}
+
+function saveTrendFromResult(result) {
+  const history = JSON.parse(localStorage.getItem('medintel_trends') || '[]');
+  const now = new Date().toISOString();
+
+  const glucose = result.labs.find(x => x.test === 'Glucose');
+  const bp = result.labs.find(x => x.test === 'Blood Pressure');
+
+  if (glucose) {
+    history.push({ type: 'sugar', value: parseFloat(glucose.value), label: now, note: glucose.status });
+  }
+  if (bp) {
+    const [s, d] = String(bp.value).split('/').map(Number);
+    if (Number.isFinite(s) && Number.isFinite(d)) {
+      history.push({ type: 'bp_sys', value: s, label: now, note: 'Systolic' });
+      history.push({ type: 'bp_dia', value: d, label: now, note: 'Diastolic' });
+    }
+  }
+  localStorage.setItem('medintel_trends', JSON.stringify(history.slice(-50)));
+  refreshCharts();
+}
+
+function updateHistorySummary() {
+  const history = JSON.parse(localStorage.getItem('medintel_trends') || '[]');
+  const box = document.getElementById('historySummary');
+  if (!history.length) {
+    box.innerHTML = 'No history saved yet.';
+    return;
+  }
+  const sugar = history.filter(x => x.type === 'sugar');
+  const bp = history.filter(x => x.type.startsWith('bp'));
+  box.innerHTML = `
+    <strong>Total records:</strong> ${history.length}<br>
+    <strong>Sugar entries:</strong> ${sugar.length}<br>
+    <strong>BP entries:</strong> ${bp.length}<br>
+    <strong>Last update:</strong> ${escapeHTML(history[history.length - 1].label)}
+  `;
+}
+
+function seedTrendData() {
+  const demo = [
+    { type: 'sugar', value: 240, label: '2026-02-01' },
+    { type: 'sugar', value: 210, label: '2026-03-01' },
+    { type: 'sugar', value: 180, label: '2026-04-01' },
+    { type: 'sugar', value: 160, label: '2026-05-01' },
+    { type: 'bp_sys', value: 150, label: '2026-02-01' },
+    { type: 'bp_sys', value: 145, label: '2026-03-01' },
+    { type: 'bp_sys', value: 138, label: '2026-04-01' },
+    { type: 'bp_sys', value: 132, label: '2026-05-01' },
+    { type: 'bp_dia', value: 96, label: '2026-02-01' },
+    { type: 'bp_dia', value: 92, label: '2026-03-01' },
+    { type: 'bp_dia', value: 88, label: '2026-04-01' },
+    { type: 'bp_dia', value: 84, label: '2026-05-01' }
+  ];
+  localStorage.setItem('medintel_trends', JSON.stringify(demo));
+  refreshCharts();
+  updateHistorySummary();
+  toast('Demo trend data added.');
+}
+
+function clearTrendData() {
+  localStorage.removeItem('medintel_trends');
+  refreshCharts();
+  updateHistorySummary();
+  toast('Trend data cleared.');
+}
+
+function clearAllData() {
+  localStorage.removeItem('medintel_trends');
+  localStorage.removeItem('medintel_profile');
+  localStorage.removeItem('medintel_family_profile');
+  localStorage.removeItem('medintel_login');
+  document.getElementById('reportResults').innerHTML = '';
+  document.getElementById('chatMessages').innerHTML = '';
+  document.getElementById('careList').innerHTML = '';
+  document.getElementById('quickNav').innerHTML = '';
+  document.getElementById('reportMeta').innerHTML = '';
+  refreshCharts();
+  updateHistorySummary();
+  toast('Local data cleared.');
+}
+
+function exportHistory() {
+  const payload = {
+    profile: JSON.parse(localStorage.getItem('medintel_profile') || '{}'),
+    trends: JSON.parse(localStorage.getItem('medintel_trends') || '[]'),
+    login: JSON.parse(localStorage.getItem('medintel_login') || '{}')
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'medintel-history.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function initCharts() {
+  const sugarCtx = document.getElementById('sugarChart');
+  const bpCtx = document.getElementById('bpChart');
+
+  state.charts.sugar = new Chart(sugarCtx, {
+    type: 'line',
+    data: { labels: [], datasets: [{ label: 'Sugar', data: [], tension: 0.35 }] },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: false } }
+    }
+  });
+
+  state.charts.bp = new Chart(bpCtx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        { label: 'Systolic', data: [], tension: 0.35 },
+        { label: 'Diastolic', data: [], tension: 0.35 }
+      ]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: false } } }
+  });
+  refreshCharts();
+}
+
+function refreshCharts() {
+  const history = JSON.parse(localStorage.getItem('medintel_trends') || '[]');
+  const sugar = history.filter(x => x.type === 'sugar').slice(-12);
+  const bpSys = history.filter(x => x.type === 'bp_sys').slice(-12);
+  const bpDia = history.filter(x => x.type === 'bp_dia').slice(-12);
+
+  if (state.charts.sugar) {
+    state.charts.sugar.data.labels = sugar.map(x => x.label.slice(5, 10));
+    state.charts.sugar.data.datasets[0].data = sugar.map(x => x.value);
+    state.charts.sugar.update();
+  }
+  if (state.charts.bp) {
+    state.charts.bp.data.labels = bpSys.map(x => x.label.slice(5, 10));
+    state.charts.bp.data.datasets[0].data = bpSys.map(x => x.value);
+    state.charts.bp.data.datasets[1].data = bpDia.map(x => x.value);
+    state.charts.bp.update();
+  }
+}
+
+function speak(text, lang = 'en-IN', rate = 1) {
+  if (!state.speechEnabled || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = lang;
+  utter.rate = rate;
+  const voiceStyle = getValue('voiceStyle');
+  if (voiceStyle === 'slow') utter.rate = 0.86;
+  window.speechSynthesis.speak(utter);
+}
+
+function speakCurrentSummary() {
+  if (!state.selectedSpeechText) {
+    toast('Analyze a report first.');
+    return;
+  }
+  speak(state.selectedSpeechText, getValue('uiLanguage'));
+}
+
+function speakElement(id) {
+  const el = document.getElementById(id);
+  const text = el ? el.innerText.replace(/\s+/g, ' ').trim() : '';
+  if (!text) {
+    toast('No text to speak.');
+    return;
+  }
+  speak(text.slice(0, 900), getValue('uiLanguage'));
+}
+
+function toggleVoice() {
+  state.speechEnabled = !state.speechEnabled;
+  toast(state.speechEnabled ? 'Speech output enabled.' : 'Speech output disabled.');
+}
+
+function startVoiceTo(targetId) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    alert('Speech recognition is not supported in this browser.');
+    return;
+  }
+  const recognition = new SR();
+  recognition.lang = getValue('uiLanguage') || 'en-IN';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.onresult = (event) => {
+    const text = event.results[0][0].transcript;
+    const target = document.getElementById(targetId);
+    if (target) target.value = (target.value ? `${target.value} ` : '') + text;
+    speak(text, recognition.lang);
+  };
+  recognition.onerror = () => toast('Voice input failed.');
+  recognition.start();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const query = input.value.trim();
+  if (!query) return;
+
+  appendChat(query, 'user');
+  input.value = '';
+
+  try {
+    let data = null;
+    try {
+      data = await fetchJson(`${API_BASE}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, profile: readProfile(), memory: JSON.parse(localStorage.getItem('medintel_trends') || '[]') })
+      });
+    } catch (e) {}
+
+    const response = data?.response || localResponse(query);
+    appendChat(response, 'ai');
+    if (state.speechEnabled) speak(response, getValue('uiLanguage'));
+  } catch (error) {
+    appendChat('Chat unavailable. Try local demo text.', 'ai');
+  }
+}
+
+function appendChat(text, who) {
+  const box = document.getElementById('chatMessages');
+  const row = document.createElement('div');
+  row.className = `chat-row ${who}`;
+  row.innerHTML = `<div class="chat-bubble">${nl2br(text)}</div>`;
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
+}
+
+function localResponse(query) {
+  const q = query.toLowerCase();
+  if (q.includes('rice') && q.includes('diabetes')) {
+    return 'Yes, in controlled quantity. Prefer brown rice or smaller portions. Pair with protein and fiber, and follow the doctor’s sugar plan.';
+  }
+  if (q.includes('fever') && q.includes('medicine')) {
+    return 'For fever, the system should first check age, weight, allergy, pregnancy, and existing disease before suggesting any medicine. A child needs weight-based pediatric dosing and doctor review.';
+  }
+  if (q.includes('anemia')) {
+    return 'Hemoglobin around 8 suggests anemia risk and needs CBC review and clinician evaluation. Iron-rich food alone may not be enough.';
+  }
+  return 'I can explain reports, medicines, symptoms, diet, emergency signs, and nearby care in simple language. Ask in English or Hindi.';
+}
+
+function checkSymptoms() {
+  const text = `${getValue('symptomsInput')} ${getValue('summarySymptoms')} ${getValue('temperature')} ${getValue('symptomDuration')}`.trim();
+  const raw = text.toLowerCase();
+
+  const result = {
+    severity: 'Low',
+    possibilities: [],
+    tests: [],
+    advice: [],
+    emergency: false
+  };
+
+  const emergency = /chest pain|left arm numbness|sweating|shortness of breath|breathing trouble|confusion|stroke|one side weak|faint|unconscious/i.test(raw);
+  if (emergency) {
+    result.severity = 'Emergency';
+    result.emergency = true;
+    result.possibilities = ['Possible heart attack risk', 'Possible stroke / severe acute event'];
+    result.tests = ['Call emergency services now'];
+    result.advice = ['Seek emergency care immediately', 'Do not drive alone', 'Use SOS / ambulance'];
+  } else {
+    if (/fever|temperature/.test(raw)) {
+      result.possibilities.push('Viral fever');
+      result.possibilities.push('Dengue');
+      result.possibilities.push('Infection / inflammation');
+      result.tests.push('CBC');
+      result.tests.push('Hydration assessment');
+      result.advice.push('Drink fluids and monitor for warning signs');
+      result.severity = /vomit|vomiting/.test(raw) ? 'Moderate' : 'Low';
+    }
+    if (/vomit|vomiting|loose motion|diarrhea|diarrhoea/.test(raw)) {
+      result.possibilities.push('Food poisoning');
+      result.tests.push('Hydration check');
+      result.advice.push('Use oral rehydration and monitor dehydration');
+      result.severity = 'Moderate';
+    }
+    if (/body pain|ache|headache/.test(raw)) {
+      result.possibilities.push('Viral syndrome');
+      result.tests.push('Basic evaluation');
+    }
+    if (!result.possibilities.length) {
+      result.possibilities.push('Non-specific symptoms');
+      result.advice.push('Provide more details or upload the report');
+    }
+  }
+
+  const html = `
+    <div class="card">
+      <div class="toolbar">
+        <h2>Symptom triage result</h2>
+        <span class="severity ${result.severity === 'Emergency' ? 'emergency' : result.severity === 'Moderate' ? 'moderate' : 'low'}">${escapeHTML(result.severity)}</span>
+      </div>
+      <div class="result-grid">
+        <div class="result-card">
+          <h3>Possible causes</h3>
+          <div class="chip-wrap">${result.possibilities.map(x => `<span class="chip warn">${escapeHTML(x)}</span>`).join('')}</div>
+        </div>
+        <div class="result-card">
+          <h3>Recommended tests / next steps</h3>
+          <div class="chip-wrap">${result.tests.map(x => `<span class="chip ok">${escapeHTML(x)}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="result-grid">
+        <div class="result-card">
+          <h3>Urgency guidance</h3>
+          <div class="callout ${result.emergency ? 'red' : result.severity === 'Moderate' ? 'blue' : 'green'}">
+            ${result.emergency ? 'Possible emergency. Seek emergency care immediately.' : result.severity === 'Moderate' ? 'Moderate urgency. Contact a doctor if symptoms persist or worsen.' : 'Lower urgency, but still monitor and review if symptoms continue.'}
+          </div>
+        </div>
+        <div class="result-card">
+          <h3>Advice</h3>
+          <div class="list">${result.advice.map(a => `<div class="item">${escapeHTML(a)}</div>`).join('')}</div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('symptomResult').innerHTML = html;
+  document.getElementById('emergencyStatus').className = `callout ${result.emergency ? 'red' : result.severity === 'Moderate' ? 'blue' : 'green'}`;
+  document.getElementById('emergencyStatus').innerHTML = result.emergency ? 'Emergency signal detected. Activate SOS now.' : 'No emergency signal detected.';
+  if (state.speechEnabled) speak(result.emergency ? 'Emergency signal detected. Seek emergency care immediately.' : `Urgency ${result.severity}.`, getValue('uiLanguage'));
+}
+
+function initMap() {
+  state.map = L.map('map').setView([20.5937, 78.9629], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(state.map);
+}
+
+function setMapLocation(lat, lng, label = 'Your location') {
+  state.userLat = lat;
+  state.userLng = lng;
+  document.getElementById('locationStatus').textContent = `Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  if (!state.map) return;
+  state.map.setView([lat, lng], 13);
+  clearMarkers();
+  const marker = L.marker([lat, lng]).addTo(state.map).bindPopup(label).openPopup();
+  state.markers.push(marker);
+}
+
+function clearMarkers() {
+  if (!state.map) return;
+  state.markers.forEach(m => state.map.removeLayer(m));
+  state.markers = [];
+}
+
+function haversineKm(aLat, aLng, bLat, bLng) {
+  const R = 6371;
+  const dLat = (bLat - aLat) * Math.PI / 180;
+  const dLng = (bLng - aLng) * Math.PI / 180;
+  const x = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(aLat * Math.PI / 180) * Math.cos(bLat * Math.PI / 180) * Math.sin(dLng/2) * Math.sin(dLng/2);
+  return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+}
+
+function overpassQuery(type, lat, lng, radius) {
+  const queries = {
+    hospital: `node["amenity"~"hospital|clinic|doctors"](around:${radius},${lat},${lng});`,
+    pharmacy: `node["amenity"="pharmacy"](around:${radius},${lat},${lng});`,
+    cardiologist: `node["amenity"="doctors"]["healthcare:speciality"~"cardiology|cardiologist"](around:${radius},${lat},${lng});`,
+    dentist: `node["amenity"~"dentist|doctors"]["healthcare:speciality"~"dentistry|dental"](around:${radius},${lat},${lng});`,
+    neurologist: `node["amenity"="doctors"]["healthcare:speciality"~"neurology|neurologist"](around:${radius},${lat},${lng});`,
+    pathology: `node["amenity"~"laboratory|clinic|hospital"](around:${radius},${lat},${lng});`,
+    ambulance: `node["emergency"~"ambulance_station|yes"](around:${radius},${lat},${lng});`,
+    icu: `node["amenity"="hospital"]["emergency"="yes"](around:${radius},${lat},${lng});`
+  };
+  return `
+    [out:json][timeout:25];
+    (
+      ${queries[type] || queries.hospital}
+    );
+    out center 20;
+  `;
+}
+
+async function findNearbyCare() {
+  if (!state.userLat || !state.userLng) {
+    toast('Location not available yet. Allow location access or use demo coordinates.');
+    return;
+  }
+  const type = getValue('careType');
+  const radius = parseInt(getValue('radius') || '5000', 10);
+  const focus = getValue('diseaseFocus');
+
+  const query = overpassQuery(type, state.userLat, state.userLng, radius);
+  const careList = document.getElementById('careList');
+  const quickNav = document.getElementById('quickNav');
+  careList.innerHTML = '<div class="item"><strong>Loading nearby results…</strong>Searching OpenStreetMap / Overpass for relevant locations.</div>';
+  quickNav.innerHTML = '';
+
+  try {
+    const resp = await fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      body: query
+    });
+    const data = await resp.json();
+    const elements = (data.elements || []).slice(0, 12);
+
+    clearMarkers();
+    setMapLocation(state.userLat, state.userLng, 'Your location');
+    const results = elements.map(el => {
+      const lat = el.lat || el.center?.lat;
+      const lng = el.lon || el.center?.lon;
+      const name = el.tags?.name || type;
+      const dist = lat && lng ? haversineKm(state.userLat, state.userLng, lat, lng) : null;
+      return {
+        name,
+        lat,
+        lng,
+        dist,
+        address: [el.tags?.['addr:full'], el.tags?.['addr:street'], el.tags?.['addr:suburb'], el.tags?.['addr:city']].filter(Boolean).join(', ') || 'Address not available',
+        tags: el.tags || {}
+      };
+    }).filter(x => x.lat && x.lng).sort((a,b) => (a.dist || 9999) - (b.dist || 9999));
+
+    if (!results.length) throw new Error('No results');
+
+    careList.innerHTML = results.map(r => `
+      <div class="item">
+        <strong>${escapeHTML(r.name)}</strong>
+        <div>${escapeHTML(r.address)}</div>
+        <div class="small">${r.dist != null ? `${r.dist.toFixed(2)} km away` : 'Distance unavailable'}</div>
+        <div class="small">Focus: ${escapeHTML(focus || type)}</div>
+      </div>
+    `).join('');
+
+    quickNav.innerHTML = results.slice(0, 6).map(r => `
+      <div class="item">
+        <strong>${escapeHTML(r.name)}</strong>
+        <div class="small">
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${r.lat},${r.lng}`)}" target="_blank">Google Maps</a> ·
+          <a href="https://www.openstreetmap.org/?mlat=${r.lat}&mlon=${r.lng}#map=18/${r.lat}/${r.lng}" target="_blank">OSM</a>
+        </div>
+      </div>
+    `).join('');
+
+    results.slice(0, 8).forEach(r => {
+      const marker = L.marker([r.lat, r.lng]).addTo(state.map).bindPopup(`<strong>${escapeHTML(r.name)}</strong><br>${escapeHTML(r.address)}<br>${r.dist != null ? `${r.dist.toFixed(2)} km away` : ''}`);
+      state.markers.push(marker);
+    });
+    toast('Nearby care results loaded.');
+  } catch (error) {
+    console.error(error);
+    const fallback = buildFallbackCare(type);
+    careList.innerHTML = fallback.map(r => `
+      <div class="item">
+        <strong>${escapeHTML(r.name)}</strong>
+        <div>${escapeHTML(r.address)}</div>
+        <div class="small">${escapeHTML(r.note)}</div>
+      </div>
+    `).join('');
+    quickNav.innerHTML = fallback.map(r => `
+      <div class="item">
+        <strong>${escapeHTML(r.name)}</strong>
+        <div class="small">${escapeHTML(r.nav)}</div>
+      </div>
+    `).join('');
+    toast('Using demo nearby care data.');
+  }
+}
+
+function buildFallbackCare(type) {
+  return [
+    { name: `Nearest ${type}`, address: 'Demo location', note: 'Connect Overpass / Google Places / backend search', nav: 'Google Maps navigation link' },
+    { name: 'Nearest hospital', address: 'Demo location', note: 'Emergency routing available', nav: 'OpenStreetMap navigation link' },
+    { name: 'Nearest pharmacy', address: 'Demo location', note: 'Pharmacy search ready', nav: 'One-tap directions' }
+  ];
+}
+
+function openGoogleMaps() {
+  if (!state.userLat || !state.userLng) return toast('Allow location first.');
+  window.open(`https://www.google.com/maps/search/?api=1&query=${state.userLat},${state.userLng}`, '_blank');
+}
+
+function openOSM() {
+  if (!state.userLat || !state.userLng) return toast('Allow location first.');
+  window.open(`https://www.openstreetmap.org/?mlat=${state.userLat}&mlon=${state.userLng}#map=14/${state.userLat}/${state.userLng}`, '_blank');
+}
+
+function triggerSOS() {
+  document.getElementById('emergencyStatus').className = 'callout red';
+  document.getElementById('emergencyStatus').innerHTML = 'SOS activated. Show ambulance, ICU, nearest hospital, and emergency contacts immediately.';
+  if (state.userLat && state.userLng) {
+    window.open(`https://www.google.com/maps/search/?api=1&query=${state.userLat},${state.userLng}`, '_blank');
+  }
+  speak('SOS activated. Seek emergency care immediately.', getValue('uiLanguage'));
+}
+
+function loadDemoReport() {
+  setValue('patientName', 'Demo Patient');
+  setValue('age', '20');
+  setValue('gender', 'Female');
+  setValue('weight', '55');
+  setValue('summarySymptoms', 'fever, body pain, vomiting');
+  setValue('medicalHistory', 'No known history');
+  setValue('ocrText', 'Glucose 260 mg/dL\nHemoglobin 8 g/dL\nBlood Pressure 160/100\nFever 102 F\nSymptoms: chest pain, sweating, vomiting');
+  toast('Demo data loaded.');
+}
+
+async function extractStructure() {
+  await analyzeReport();
+  const text = getValue('ocrText');
+  const candidates = [];
+  if (/glucose|sugar|hba1c|hemoglobin|bp|blood pressure|creatinine/i.test(text)) candidates.push('Biochemistry / CBC');
+  if (/rx|tablet|cap|syrup|dose|dosage/i.test(text)) candidates.push('Prescription');
+  if (/patient|age|sex|gender/i.test(text)) candidates.push('Patient header');
+  if (/x-ray|ct|mri|scan|ultrasound/i.test(text)) candidates.push('Radiology');
+  if (!candidates.length) candidates.push('No section patterns recognized');
+  const extra = `
+    <div class="card" style="margin-top:18px">
+      <h2>🧩 PDF structure extraction</h2>
+      <div class="chip-wrap">${candidates.map(x => `<span class="chip">${escapeHTML(x)}</span>`).join('')}</div>
+      <div class="footer-note">Backend can be enhanced with page segmentation, table detection, and signature/stamp extraction to understand real medical PDFs and handwritten prescriptions better.</div>
+    </div>`;
+  document.getElementById('reportResults').insertAdjacentHTML('beforeend', extra);
+}
+
+function initProfile() {
+  try {
+    const profile = JSON.parse(localStorage.getItem('medintel_profile') || '{}');
+    ['patientName','age','gender','weight','allergy','pregnancy','lang','medicalHistory','summarySymptoms'].forEach(id => {
+      if (profile[id]) setValue(id, profile[id]);
+    });
+    const family = JSON.parse(localStorage.getItem('medintel_family_profile') || '{}');
+    if (family.role) setValue('role', family.role);
+    if (family.loginId) setValue('loginId', family.loginId);
+  } catch (e) {}
+}
+
+function initLocation() {
+  if (!navigator.geolocation) {
+    document.getElementById('locationStatus').textContent = 'Geolocation not supported.';
+    setMapLocation(20.5937, 78.9629, 'India');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      document.getElementById('locationStatus').textContent = `Location access granted: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      setMapLocation(lat, lng, 'Your location');
+    },
+    () => {
+      document.getElementById('locationStatus').textContent = 'Location access denied. Using demo center.';
+      setMapLocation(20.5937, 78.9629, 'Demo location');
+    },
+    { enableHighAccuracy: true, timeout: 8000, maximumAge: 120000 }
+  );
+}
+
+function init() {
+  loadApiBaseFromStorage();
+  updateApiBaseStatus();
+  initMap();
+  initCharts();
+  initProfile();
+  updateHistorySummary();
+  initLocation();
+  applyScale();
+  const reportResults = document.getElementById('reportResults');
+  reportResults.innerHTML = `
+    <div class="card">
+      <div class="callout blue">Upload a report or paste OCR text, then click “Analyze report”. The app will try the backend first and then fall back to local parsing.</div>
+    </div>`;
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+window.addEventListener('beforeunload', () => {
+  if (state.map) state.map.remove();
+});
+</script>
+</body>
+</html>
